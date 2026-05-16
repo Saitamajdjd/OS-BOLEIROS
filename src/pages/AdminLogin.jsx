@@ -20,7 +20,17 @@ export default function AdminLogin() {
     })
 
     if (error) {
-      setError('Email ou senha inválidos')
+      let mensagemErro = 'Email ou senha inválidos'
+
+      if (error.message.includes('fetch')) {
+        mensagemErro = 'Erro de conexão. Verifique as variáveis de ambiente na Vercel.'
+      } else if (error.message.includes('Invalid login credentials')) {
+        mensagemErro = 'Email ou senha incorretos.'
+      } else if (error.message) {
+        mensagemErro = `Erro: ${error.message}`
+      }
+
+      setError(mensagemErro)
       setLoading(false)
     } else {
       navigate('/admin/painel')
