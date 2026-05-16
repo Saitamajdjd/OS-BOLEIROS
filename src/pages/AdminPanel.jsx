@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import toast from 'react-hot-toast'
@@ -103,14 +103,14 @@ export default function AdminPanel() {
 
   const logout = async () => { await supabase.auth.signOut(); navigate('/admin') }
 
-  const filtrarPedidos = () => pedidos.filter(p => {
+  const filtrarPedidos = useMemo(() => pedidos.filter(p => {
     if (busca && !p.nome.toLowerCase().includes(busca.toLowerCase())) return false
     if (filtroPago === 'pago' && !p.pago) return false
     if (filtroPago === 'pendente' && p.pago) return false
     if (filtroTamanho && p.tamanho_camisa !== filtroTamanho) return false
     if (filtroSexo && p.sexo_short !== filtroSexo) return false
     return true
-  })
+  }), [pedidos, busca, filtroPago, filtroTamanho, filtroSexo])
 
   const abrirModal = (pedido = null) => {
     if (pedido) {
@@ -168,7 +168,7 @@ export default function AdminPanel() {
     })
   }
 
-  const stats = { total: pedidos.length, pagos: pedidos.filter(p => p.pago).length, pendentes: pedidos.filter(p => !p.pago).length, camisas: TAMANHOS.map(t => ({ tamanho: t, quantidade: pedidos.filter(p => p.tamanho_camisa === t).length })), shortsM: TAMANHOS.map(t => ({ tamanho: t, quantidade: pedidos.filter(p => p.sexo_short === 'Masculino' && p.tamanho_short === t).length })), shortsF: TAMANHOS.map(t => ({ tamanho: t, quantidade: pedidos.filter(p => p.sexo_short === 'Feminino' && p.tamanho_short === t).length })) }
+  const stats = useMemo(() => ({ total: pedidos.length, pagos: pedidos.filter(p => p.pago).length, pendentes: pedidos.filter(p => !p.pago).length, camisas: TAMANHOS.map(t => ({ tamanho: t, quantidade: pedidos.filter(p => p.tamanho_camisa === t).length })), shortsM: TAMANHOS.map(t => ({ tamanho: t, quantidade: pedidos.filter(p => p.sexo_short === 'Masculino' && p.tamanho_short === t).length })), shortsF: TAMANHOS.map(t => ({ tamanho: t, quantidade: pedidos.filter(p => p.sexo_short === 'Feminino' && p.tamanho_short === t).length })) }), [pedidos])
 
   const renderizarAba = () => {
     switch (abaAtiva) {
@@ -182,7 +182,7 @@ export default function AdminPanel() {
   }
 
   function PedidosSection({ stats, precos }) {
-    const pedidosFiltrados = filtrarPedidos()
+    const pedidosFiltrados = filtrarPedidos
     return (
       <div className="space-y-6">
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
