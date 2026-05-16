@@ -1,5 +1,20 @@
 # Os Boleiro - Site de Vendas
 
+## Atualizações Recentes
+
+### Segurança Implementada
+- **Timeout de sessão**: Admin faz logout automático após 30 minutos de inatividade
+- **Modal de confirmação**: Substituído `window.confirm()` por modal visual personalizada
+- **Proteção de rotas**: Painel admin protegido com verificação de autenticação
+- **Validação de uploads**: Verificação de tipo (JPG, JPEG, PNG) e tamanho (5MB máx)
+- **Limpeza de dados**: Telefone e número personalizado validados antes do envio
+
+### Arquivos Criados
+- `src/hooks/useAdminSessionTimeout.js` - Hook para timeout de sessão
+- `src/components/ConfirmModal.jsx` - Modal de confirmação reutilizável
+
+---
+
 ## Como rodar o projeto
 
 ```bash
